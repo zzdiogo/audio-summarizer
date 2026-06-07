@@ -1,12 +1,17 @@
 import logging
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from app import __version__
 from app.api.meetings import router as meetings_router
 from app.config import get_settings
 from app.schemas import HealthResponse
+
+STATIC_DIR = Path(__file__).parent / "static"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -16,10 +21,11 @@ logging.basicConfig(
 settings = get_settings()
 
 app = FastAPI(
-    title="Meeting Summarizer",
+    title="Audio Summarizer",
     description=(
-        "API que transcreve gravações de reuniões com Whisper "
-        "e gera resumos estruturados com LLM."
+        "Transcribe lectures, videos, podcasts, and any audio with Whisper "
+        "and generate detailed summaries with an LLM. "
+        "Built by Diogo Botelho."
     ),
     version=__version__,
     docs_url="/docs",
@@ -35,6 +41,7 @@ app.add_middleware(
 )
 
 app.include_router(meetings_router)
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
 @app.get("/health", response_model=HealthResponse, tags=["health"])
@@ -47,10 +54,6 @@ async def health_check() -> HealthResponse:
     )
 
 
-@app.get("/", tags=["health"])
-async def root() -> dict[str, str]:
-    return {
-        "message": "Meeting Summarizer API",
-        "docs": "/docs",
-        "health": "/health",
-    }
+@app.get("/", include_in_schema=False)
+async def root() -> FileResponse:
+    return FileResponse(STATIC_DIR / "index.html")

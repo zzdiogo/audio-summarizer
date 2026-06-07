@@ -46,3 +46,6 @@ output/
 
 # Whisper cache
 .cache/
+
+# Tests
+.pytest_cache/

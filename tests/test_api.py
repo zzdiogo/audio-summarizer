@@ -10,7 +10,8 @@ client = TestClient(app)
 def test_root():
     response = client.get("/")
     assert response.status_code == 200
-    assert "Meeting Summarizer" in response.json()["message"]
+    assert "Audio Summarizer" in response.text
+    assert "text/html" in response.headers["content-type"]
 
 
 def test_health():

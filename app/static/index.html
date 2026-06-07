@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Audio Summarizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="bg-glow"></div>
+
+  <header class="header">
+    <div class="logo">
+      <span class="logo-icon">🎧</span>
+      <div>
+        <h1>Audio Summarizer</h1>
+        <p>Lectures · videos · podcasts · any recording</p>
+      </div>
+    </div>
+    <a href="/docs" class="link-docs">API Docs</a>
+  </header>
+
+  <main class="container">
+    <section class="upload-card" id="upload-section">
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="file-input" accept=".mp3,.wav,.m4a,.ogg,.flac,.webm,.mp4,audio/*,video/*" hidden />
+        <div class="dropzone-icon">📁</div>
+        <h2>Drop your audio or video</h2>
+        <p>lectures, YouTube videos, podcasts, recordings...</p>
+        <span class="formats">MP3 · WAV · M4A · MP4 · up to 100 MB</span>
+      </div>
+
+      <div class="file-selected hidden" id="file-selected">
+        <div class="file-info">
+          <span class="file-icon">🎵</span>
+          <div>
+            <strong id="file-name">file.mp3</strong>
+            <span id="file-size">0 MB</span>
+          </div>
+        </div>
+        <button type="button" class="btn-ghost" id="btn-clear">Remove</button>
+      </div>
+
+      <div class="options">
+        <label for="language">Language (optional)</label>
+        <select id="language">
+          <option value="">Auto-detect</option>
+          <option value="en">English</option>
+          <option value="pt">Portuguese</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+        </select>
+      </div>
+
+      <button type="button" class="btn-primary" id="btn-summarize" disabled>
+        Generate summary
+      </button>
+    </section>
+
+    <section class="loading hidden" id="loading-section">
+      <div class="spinner"></div>
+      <h3>Processing your audio...</h3>
+      <p id="loading-step">Transcribing with Whisper</p>
+      <p class="loading-hint">This may take a few minutes on the first run</p>
+    </section>
+
+    <section class="error hidden" id="error-section">
+      <div class="error-icon">⚠️</div>
+      <h3>Something went wrong</h3>
+      <p id="error-message"></p>
+      <button type="button" class="btn-ghost" id="btn-retry">Try again</button>
+    </section>
+
+    <section class="results hidden" id="results-section">
+      <div class="meta-bar">
+        <span id="meta-duration"></span>
+        <span id="meta-language"></span>
+      </div>
+
+      <article class="overview-card">
+        <div class="card-header">
+          <span>📋</span>
+          <h3>Summary</h3>
+        </div>
+        <p id="overview-text"></p>
+      </article>
+
+      <div class="summary-grid">
+        <article class="summary-card topics">
+          <div class="card-header">
+            <span>📚</span>
+            <h3>Main topics</h3>
+          </div>
+          <ul id="list-topics"></ul>
+        </article>
+
+        <article class="summary-card points">
+          <div class="card-header">
+            <span>💡</span>
+            <h3>Key points</h3>
+          </div>
+          <ul id="list-points"></ul>
+        </article>
+
+        <article class="summary-card takeaways">
+          <div class="card-header">
+            <span>✨</span>
+            <h3>Takeaways</h3>
+          </div>
+          <ul id="list-takeaways"></ul>
+        </article>
+      </div>
+
+      <details class="transcription">
+        <summary>View full transcript</summary>
+        <p id="transcription-text"></p>
+      </details>
+
+      <button type="button" class="btn-ghost btn-new" id="btn-new">Summarize another file</button>
+    </section>
+  </main>
+
+  <footer class="footer">
+    Audio Summarizer · Built by <a href="https://github.com/zzdiogo" target="_blank" rel="noopener">Diogo Botelho</a>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CLI para resumir reuniões a partir da linha de comandos."""
+"""CLI to transcribe and summarize audio files."""
 
 import argparse
 import json
@@ -15,39 +15,40 @@ from app.services.transcriber import TranscriberService
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Transcreve e resume um ficheiro de áudio de reunião.",
+        description="Transcribe and summarize an audio or video file.",
     )
-    parser.add_argument("audio", type=Path, help="Caminho para o ficheiro de áudio")
+    parser.add_argument("audio", type=Path, help="Path to the audio/video file")
     parser.add_argument(
         "--language",
         "-l",
-        help="Código ISO do idioma (ex: pt, en)",
+        help="ISO language code (e.g. en, pt)",
         default=None,
     )
     parser.add_argument(
         "--output",
         "-o",
         type=Path,
-        help="Guardar resultado em JSON",
+        help="Save result as JSON",
         default=None,
     )
     args = parser.parse_args()
 
     if not args.audio.exists():
-        print(f"Erro: ficheiro não encontrado: {args.audio}", file=sys.stderr)
+        print(f"Error: file not found: {args.audio}", file=sys.stderr)
         sys.exit(1)
 
     settings = get_settings()
     transcriber = TranscriberService(settings)
     summarizer = SummarizerService(settings)
 
-    print(f"A transcrever: {args.audio}")
+    print(f"Transcribing: {args.audio}")
     transcription, language, duration = transcriber.transcribe(
         args.audio, language=args.language
     )
 
-    print(f"Idioma: {language} | Duração: {duration:.1f}s" if duration else "")
-    print("A gerar resumo...")
+    if duration:
+        print(f"Language: {language} | Duration: {duration:.1f}s")
+    print("Generating summary...")
 
     summary = summarizer.summarize(transcription)
 
@@ -63,7 +64,7 @@ def main() -> None:
 
     if args.output:
         args.output.write_text(output, encoding="utf-8")
-        print(f"\nGuardado em: {args.output}")
+        print(f"\nSaved to: {args.output}")
 
 
 if __name__ == "__main__":

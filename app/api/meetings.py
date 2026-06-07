@@ -2,7 +2,7 @@ import logging
 import tempfile
 from pathlib import Path
 
-from fastapi import APIRouter, File, HTTPException, Query, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 
 from app.config import Settings, get_settings
 from app.schemas import SummarizeResponse
@@ -10,12 +10,12 @@ from app.services.summarizer import SummarizerService
 from app.services.transcriber import TranscriberService
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/api/v1", tags=["meetings"])
+router = APIRouter(prefix="/api/v1", tags=["audio"])
 
 
 def _validate_audio_file(file: UploadFile, settings: Settings) -> None:
     if not file.filename:
-        raise HTTPException(status_code=400, detail="Nome do ficheiro em falta.")
+        raise HTTPException(status_code=400, detail="Filename is missing.")
 
     extension = Path(file.filename).suffix.lower()
     allowed = {ext.strip() for ext in settings.allowed_extensions.split(",")}
@@ -23,27 +23,26 @@ def _validate_audio_file(file: UploadFile, settings: Settings) -> None:
     if extension not in allowed:
         raise HTTPException(
             status_code=400,
-            detail=f"Formato não suportado. Usa um destes: {', '.join(sorted(allowed))}",
+            detail=f"Unsupported format. Use one of: {', '.join(sorted(allowed))}",
         )
 
 
 @router.post("/summarize", response_model=SummarizeResponse)
-async def summarize_meeting(
-    audio: UploadFile = File(..., description="Ficheiro de áudio da reunião"),
-    language: str | None = Query(
-        None,
-        description="Código ISO do idioma (ex: pt, en). Auto-detetado se omitido.",
-        min_length=2,
-        max_length=5,
+async def summarize_audio(
+    audio: UploadFile = File(..., description="Audio or video file to summarize"),
+    language: str | None = Form(
+        default=None,
+        description="ISO language code (e.g. en, pt). Auto-detected if omitted.",
     ),
-    settings: Settings = get_settings,
+    settings: Settings = Depends(get_settings),
 ) -> SummarizeResponse:
     """
-    Transcreve um ficheiro de áudio e devolve um resumo estruturado da reunião.
+    Transcribe an audio/video file and return a structured summary.
 
-    - **Tópicos discutidos**
-    - **Decisões tomadas**
-    - **Próximos passos**
+    - **Overview** — what the content is about
+    - **Main topics** — subjects or sections covered
+    - **Key points** — important details and facts
+    - **Takeaways** — main conclusions to remember
     """
     _validate_audio_file(audio, settings)
 
@@ -60,7 +59,7 @@ async def summarize_meeting(
                 tmp_path.unlink(missing_ok=True)
                 raise HTTPException(
                     status_code=413,
-                    detail=f"Ficheiro demasiado grande. Máximo: {settings.max_upload_size_mb} MB",
+                    detail=f"File too large. Maximum size: {settings.max_upload_size_mb} MB",
                 )
             tmp.write(chunk)
 
@@ -68,7 +67,7 @@ async def summarize_meeting(
         transcriber = TranscriberService(settings)
         summarizer = SummarizerService(settings)
 
-        logger.info("A transcrever áudio: %s", audio.filename)
+        logger.info("Transcribing: %s", audio.filename)
         transcription, detected_lang, duration = transcriber.transcribe(
             tmp_path, language=language
         )
@@ -76,10 +75,10 @@ async def summarize_meeting(
         if not transcription:
             raise HTTPException(
                 status_code=422,
-                detail="Não foi possível extrair texto do áudio.",
+                detail="Could not extract speech from the audio.",
             )
 
-        logger.info("A gerar resumo (%d caracteres)...", len(transcription))
+        logger.info("Generating summary (%d characters)...", len(transcription))
         summary = summarizer.summarize(transcription)
 
         return SummarizeResponse(
@@ -92,10 +91,10 @@ async def summarize_meeting(
     except ValueError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     except Exception as exc:
-        logger.exception("Erro ao processar reunião")
+        logger.exception("Failed to process audio")
         raise HTTPException(
             status_code=500,
-            detail="Erro interno ao processar o áudio.",
+            detail="Internal error while processing the audio.",
         ) from exc
     finally:
         tmp_path.unlink(missing_ok=True)

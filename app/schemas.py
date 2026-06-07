@@ -1,24 +1,28 @@
 from pydantic import BaseModel, Field
 
 
-class MeetingSummary(BaseModel):
-    topicos_discutidos: list[str] = Field(
+class AudioSummary(BaseModel):
+    overview: str = Field(
         ...,
-        description="Principais tópicos abordados na reunião",
+        description="2-3 sentence summary of what the audio is about",
     )
-    decisoes_tomadas: list[str] = Field(
+    main_topics: list[str] = Field(
         ...,
-        description="Decisões concretas acordadas durante a reunião",
+        description="Main subjects or sections covered",
     )
-    proximos_passos: list[str] = Field(
+    key_points: list[str] = Field(
         ...,
-        description="Ações e tarefas definidas para o futuro",
+        description="Important facts, explanations, or details mentioned",
+    )
+    takeaways: list[str] = Field(
+        ...,
+        description="Main conclusions or things worth remembering",
     )
 
 
 class SummarizeResponse(BaseModel):
     transcription: str
-    summary: MeetingSummary
+    summary: AudioSummary
     duration_seconds: float | None = None
     language: str | None = None
 

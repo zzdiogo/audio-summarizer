@@ -1,206 +1,270 @@
-# 🎙️ Meeting Summarizer
+<p align="center">
+  <h1 align="center">🎧 Audio Summarizer</h1>
+  <p align="center">
+    Turn any recording into a transcript and a structured summary — powered by Whisper &amp; LLMs.
+  </p>
+</p>
 
-> API que transcreve gravações de reuniões e gera resumos estruturados automaticamente.
+<p align="center">
+  <a href="https://github.com/zzdiogo/audio-summarizer"><img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=flat&logo=python&logoColor=white" alt="Python"></a>
+  <a href="https://fastapi.tiangolo.com"><img src="https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white" alt="FastAPI"></a>
+  <a href="https://github.com/openai/whisper"><img src="https://img.shields.io/badge/Whisper-OpenAI-412991?style=flat" alt="Whisper"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License"></a>
+</p>
 
-[![Python](https://img.shields.io/badge/Python-3.11%2B-blue)](https://python.org)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green)](https://fastapi.tiangolo.com)
-[![Whisper](https://img.shields.io/badge/Whisper-OpenAI-orange)](https://github.com/openai/whisper)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+<p align="center">
+  <b>Built by <a href="https://github.com/zzdiogo">Diogo Botelho</a></b>
+</p>
 
 ---
 
-## O que faz?
+## About
 
-Envias um ficheiro de áudio de uma reunião (`.mp3`, `.wav`, `.m4a`, etc.) e a API devolve:
+**Audio Summarizer** is a full-stack AI application that transcribes and summarizes spoken content from audio and video files. Upload a lecture, podcast, YouTube video, or any recording — get back a full transcript plus a clean, structured summary.
 
-| Secção | Descrição |
-|--------|-----------|
-| **Tópicos discutidos** | Principais assuntos abordados |
-| **Decisões tomadas** | Acordos e conclusões da reunião |
-| **Próximos passos** | Ações e tarefas definidas |
+Perfect for students, developers, and anyone who wants to digest long-form audio without listening to the entire thing.
 
-Também recebes a transcrição completa do áudio.
+### Use cases
+
+| | |
+|---|---|
+| 🎓 Lectures & classes | Summarize hour-long recordings into key points |
+| 🎬 YouTube & tutorials | Extract what was taught from video audio |
+| 🎙️ Podcasts & interviews | Get topics and takeaways in seconds |
+| 📼 Voice memos & recordings | Transcribe and organize any spoken content |
+
+<!-- Uncomment after adding a demo GIF to docs/demo.gif -->
+<!-- <p align="center"><img src="docs/demo.gif" width="700" alt="Demo"></p> -->
+
+---
+
+## How it works
 
 ```
-Áudio da reunião  →  Whisper (transcrição)  →  LLM (resumo)  →  JSON estruturado
+┌─────────────┐     ┌──────────────────┐     ┌─────────────┐     ┌────────────────┐
+│  Audio/MP4  │ ──▶ │  faster-whisper  │ ──▶ │  LLM        │ ──▶ │  Summary +     │
+│  upload     │     │  (transcription) │     │  (Ollama /  │     │  Transcript    │
+│             │     │                  │     │   OpenAI)   │     │                │
+└─────────────┘     └──────────────────┘     └─────────────┘     └────────────────┘
 ```
 
-## Stack tecnológica
+**Output sections:**
 
-| Componente | Tecnologia | Função |
-|------------|------------|--------|
-| API | [FastAPI](https://fastapi.tiangolo.com) | Endpoints REST com documentação automática |
-| Transcrição | [faster-whisper](https://github.com/SYSTRAN/faster-whisper) | Modelos Whisper da OpenAI, otimizados |
-| Resumo | OpenAI GPT / [Ollama](https://ollama.ai) | Geração do resumo estruturado |
-| Container | Docker | Deploy reproduzível em qualquer máquina |
+| Section | What you get |
+|---------|--------------|
+| **Summary** | 2–3 sentence overview of the content |
+| **Main topics** | Subjects and sections covered |
+| **Key points** | Important facts, definitions, and details |
+| **Takeaways** | Main conclusions worth remembering |
+| **Full transcript** | Complete text of everything spoken |
 
-## Início rápido
+---
 
-### Pré-requisitos
+## Features
+
+- **Web UI** — drag-and-drop upload, no setup needed in the browser
+- **REST API** — auto-generated Swagger docs at `/docs`
+- **Multiple formats** — MP3, WAV, M4A, MP4, OGG, FLAC, WebM
+- **Flexible LLM** — [Ollama](https://ollama.ai) (free, offline) or OpenAI (best quality)
+- **Docker** — run anywhere with one command
+- **CLI** — scriptable for automation
+- **Privacy-first** — runs locally by default; uploaded files are deleted after processing
+
+---
+
+## Tech stack
+
+| Layer | Technology |
+|-------|------------|
+| Backend | [FastAPI](https://fastapi.tiangolo.com) |
+| Transcription | [faster-whisper](https://github.com/SYSTRAN/faster-whisper) (OpenAI Whisper) |
+| Summarization | [Ollama](https://ollama.ai) / OpenAI GPT |
+| Frontend | HTML, CSS, JavaScript |
+| Deployment | Docker, docker-compose |
+
+---
+
+## Quick start
+
+### Requirements
 
 - Python 3.11+
-- [FFmpeg](https://ffmpeg.org/download.html) instalado no sistema
-- Chave API da OpenAI **ou** [Ollama](https://ollama.ai) a correr localmente
+- [FFmpeg](https://ffmpeg.org/download.html)
+- [Ollama](https://ollama.ai) **or** an OpenAI API key
 
-### 1. Clonar e configurar
+### Install
 
 ```bash
-git clone https://github.com/SEU_USERNAME/meeting-summarizer.git
-cd meeting-summarizer
+git clone https://github.com/zzdiogo/audio-summarizer.git
+cd audio-summarizer
 
 python -m venv .venv
 
 # Windows
 .venv\Scripts\activate
 
-# Linux/macOS
+# macOS / Linux
 source .venv/bin/activate
 
 pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Edita o `.env` com a tua configuração:
+### Configure
+
+Edit `.env`:
 
 ```env
-# Opção A: OpenAI (recomendado para qualidade)
-LLM_PROVIDER=openai
-OPENAI_API_KEY=sk-sua-chave-aqui
-
-# Opção B: Ollama (gratuito, local)
+# Free & local (recommended to start)
 LLM_PROVIDER=ollama
 OLLAMA_MODEL=llama3.2
+
+# Or OpenAI for best quality
+# LLM_PROVIDER=openai
+# OPENAI_API_KEY=your-api-key-here
 ```
 
-### 2. Correr a API
+Pull an Ollama model:
 
-**Windows (mais fácil):**
+```bash
+ollama pull llama3.2
+```
+
+> For richer summaries, use `ollama pull llama3.1:8b` and set `OLLAMA_MODEL=llama3.1:8b`.
+
+### Run
 
 ```powershell
+# Windows
 .\run.ps1
 ```
 
-**Manual:**
-
 ```bash
+# macOS / Linux
 uvicorn app.main:app --reload
 ```
 
-Abre [http://localhost:8000/docs](http://localhost:8000/docs) para a documentação interativa (Swagger).
-
-### 3. Testar
-
-**Via Swagger UI:** vai a `/docs`, endpoint `POST /api/v1/summarize`, faz upload do áudio.
-
-**Via cURL:**
-
-```bash
-curl -X POST "http://localhost:8000/api/v1/summarize" \
-  -H "accept: application/json" \
-  -H "Content-Type: multipart/form-data" \
-  -F "audio=@reuniao.mp3"
-```
-
-**Via CLI:**
-
-```bash
-python scripts/summarize_cli.py reuniao.mp3 -o resultado.json
-```
-
-### 4. Docker (alternativa)
-
-```bash
-cp .env.example .env
-# Edita .env com as tuas credenciais
-
-docker compose up --build
-```
-
-A API fica disponível em `http://localhost:8000`.
-
-## Exemplo de resposta
-
-```json
-{
-  "transcription": "Bom dia a todos. Hoje vamos discutir o lançamento do produto...",
-  "summary": {
-    "topicos_discutidos": [
-      "Lançamento do produto na próxima semana",
-      "Orçamento de marketing para Q2",
-      "Contratação de um designer"
-    ],
-    "decisoes_tomadas": [
-      "Lançamento confirmado para dia 15",
-      "Aprovação de 5000€ para campanha digital"
-    ],
-    "proximos_passos": [
-      "João prepara landing page até sexta",
-      "Maria contacta 3 designers até quarta",
-      "Reunião de follow-up na próxima segunda"
-    ]
-  },
-  "duration_seconds": 1847.5,
-  "language": "pt"
-}
-```
-
-## Estrutura do projeto
-
-```
-meeting-summarizer/
-├── app/
-│   ├── main.py              # Entrada FastAPI
-│   ├── config.py            # Configuração via variáveis de ambiente
-│   ├── schemas.py           # Modelos Pydantic (request/response)
-│   ├── api/
-│   │   └── meetings.py      # Endpoints da API
-│   └── services/
-│       ├── transcriber.py   # Serviço Whisper
-│       └── summarizer.py    # Serviço LLM
-├── scripts/
-│   └── summarize_cli.py     # CLI para uso local
-├── requirements.txt
-├── Dockerfile
-├── docker-compose.yml
-├── .env.example
-└── README.md
-```
-
-## Configuração avançada
-
-| Variável | Default | Descrição |
-|----------|---------|-----------|
-| `WHISPER_MODEL` | `base` | Modelo Whisper (`tiny`, `base`, `small`, `medium`, `large-v3`) |
-| `WHISPER_DEVICE` | `cpu` | `cpu` ou `cuda` (GPU NVIDIA) |
-| `LLM_PROVIDER` | `openai` | `openai` ou `ollama` |
-| `LLM_MODEL` | `gpt-4o-mini` | Modelo OpenAI para resumo |
-| `MAX_UPLOAD_SIZE_MB` | `100` | Tamanho máximo do upload |
-
-> **Dica:** Para reuniões longas, usa `WHISPER_MODEL=small` ou `medium` para melhor precisão. O modelo `base` é um bom equilíbrio entre velocidade e qualidade.
-
-> **Windows:** Se o download do modelo Whisper falhar, ativa o **Modo de Programador** nas definições do Windows, ou define `HF_HUB_DISABLE_SYMLINKS=1` no `.env` (já incluído no `.env.example`).
-
-## Endpoints
-
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| `GET` | `/` | Info da API |
-| `GET` | `/health` | Health check |
-| `GET` | `/docs` | Documentação Swagger |
-| `POST` | `/api/v1/summarize` | Transcrever e resumir áudio |
-
-## Roadmap
-
-- [ ] Suporte a URLs de áudio (Google Drive, Dropbox)
-- [ ] Identificação de speakers (diarização)
-- [ ] Exportação para PDF/Markdown
-- [ ] Interface web simples
-- [ ] Suporte a vídeo (extrair áudio automaticamente)
-
-## Licença
-
-MIT — usa à vontade para portfolio, projetos pessoais ou comerciais.
+Open **http://localhost:8000** → drop a file → click **Generate summary**.
 
 ---
 
-Feito com ☕ e Python
+## API
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/` | Web interface |
+| `GET` | `/health` | Health check |
+| `GET` | `/docs` | Interactive API docs |
+| `POST` | `/api/v1/summarize` | Transcribe & summarize |
+
+**Example:**
+
+```bash
+curl -X POST "http://localhost:8000/api/v1/summarize" \
+  -F "audio=@lecture.mp4" \
+  -F "language=en"
+```
+
+<details>
+<summary><b>Example JSON response</b></summary>
+
+```json
+{
+  "transcription": "Today we'll cover the fundamentals of machine learning...",
+  "summary": {
+    "overview": "This lecture introduces machine learning basics, covering supervised vs unsupervised learning and real-world applications.",
+    "main_topics": [
+      "Introduction to machine learning: definition and why it matters in modern software.",
+      "Supervised learning: labeled data, training, and prediction with examples."
+    ],
+    "key_points": [
+      "Supervised learning uses labeled datasets to train models that predict outcomes.",
+      "Common algorithms include linear regression, decision trees, and neural networks."
+    ],
+    "takeaways": [
+      "Machine learning enables computers to learn patterns from data without explicit programming.",
+      "Choosing the right algorithm depends on the problem type and available data."
+    ]
+  },
+  "duration_seconds": 2847.0,
+  "language": "en"
+}
+```
+
+</details>
+
+---
+
+## Project structure
+
+```
+audio-summarizer/
+├── app/
+│   ├── main.py                 # FastAPI app
+│   ├── config.py               # Environment settings
+│   ├── schemas.py              # Request/response models
+│   ├── api/meetings.py         # REST endpoints
+│   ├── services/
+│   │   ├── transcriber.py      # Whisper transcription
+│   │   └── summarizer.py       # LLM summarization
+│   └── static/                 # Web UI
+├── scripts/summarize_cli.py    # Command-line tool
+├── tests/test_api.py
+├── requirements.txt
+├── Dockerfile
+├── docker-compose.yml
+└── run.ps1
+```
+
+---
+
+## Configuration
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `WHISPER_MODEL` | `base` | `tiny`, `base`, `small`, `medium`, `large-v3` |
+| `WHISPER_DEVICE` | `cpu` | `cpu` or `cuda` (GPU) |
+| `LLM_PROVIDER` | `openai` | `openai` or `ollama` |
+| `OLLAMA_MODEL` | `llama3.2` | Ollama model name |
+| `LLM_MODEL` | `gpt-4o-mini` | OpenAI model |
+| `MAX_UPLOAD_SIZE_MB` | `100` | Max file size |
+
+**Windows tip:** If Whisper model download fails, set `HF_HUB_DISABLE_SYMLINKS=1` in `.env`.
+
+---
+
+## Docker
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+---
+
+## Tests
+
+```bash
+pytest tests/ -v
+```
+
+---
+
+## Security & privacy
+
+- API keys live **only** in `.env` (never committed)
+- Uploaded audio is stored in a **temporary file** and **deleted immediately** after processing
+- With **Ollama**, everything runs **offline** on your machine
+- With **OpenAI**, only the transcript text is sent to their API
+
+---
+
+## Author
+
+**Diogo Botelho** — [@zzdiogo](https://github.com/zzdiogo)
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
