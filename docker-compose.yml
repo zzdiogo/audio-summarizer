@@ -1,0 +1,22 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - whisper-cache:/root/.cache
+    restart: unless-stopped
+
+  # Descomenta para usar Ollama localmente (LLM_PROVIDER=ollama)
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - ollama-data:/root/.ollama
+
+volumes:
+  whisper-cache:
+  # ollama-data:
