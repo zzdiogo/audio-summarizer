@@ -74,6 +74,14 @@ OLLAMA_MODEL=llama3.2
 
 ### 2. Correr a API
 
+**Windows (mais fácil):**
+
+```powershell
+.\run.ps1
+```
+
+**Manual:**
+
 ```bash
 uvicorn app.main:app --reload
 ```
@@ -169,6 +177,8 @@ meeting-summarizer/
 | `MAX_UPLOAD_SIZE_MB` | `100` | Tamanho máximo do upload |
 
 > **Dica:** Para reuniões longas, usa `WHISPER_MODEL=small` ou `medium` para melhor precisão. O modelo `base` é um bom equilíbrio entre velocidade e qualidade.
+
+> **Windows:** Se o download do modelo Whisper falhar, ativa o **Modo de Programador** nas definições do Windows, ou define `HF_HUB_DISABLE_SYMLINKS=1` no `.env` (já incluído no `.env.example`).
 
 ## Endpoints
 

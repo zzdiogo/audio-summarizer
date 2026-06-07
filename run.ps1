@@ -14,5 +14,6 @@ if (-not (Test-Path ".env")) {
 }
 
 .\.venv\Scripts\Activate.ps1
+$env:HF_HUB_DISABLE_SYMLINKS = "1"
 Write-Host "API em http://localhost:8000/docs" -ForegroundColor Green
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
