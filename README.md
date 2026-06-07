@@ -20,7 +20,7 @@
 
 ## About
 
-**Audio Summarizer** is a full-stack AI application that transcribes and summarizes spoken content from audio and video files. Upload a lecture, podcast, YouTube video, or any recording — get back a full transcript plus a clean, structured summary.
+**Audio Summarizer** is a full-stack AI application that transcribes and summarizes spoken content from audio and video files. Upload a lecture, podcast, YouTube video, or any recording you would like to summarize and get back a full transcript plus a clean, structured summary.
 
 Perfect for students, developers, and anyone who wants to digest long-form audio without listening to the entire thing.
 
@@ -251,8 +251,8 @@ pytest tests/ -v
 ---
 
 ## Security & privacy
-
-- API keys live **only** in `.env` (never committed)
+ 
+- API keys live **only** in `.env` (never committed) 
 - Uploaded audio is stored in a **temporary file** and **deleted immediately** after processing
 - With **Ollama**, everything runs **offline** on your machine
 - With **OpenAI**, only the transcript text is sent to their API
