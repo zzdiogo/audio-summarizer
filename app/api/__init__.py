@@ -1,3 +1,3 @@
-from app.api.meetings import router as meetings_router
+from app.api.audio import router as audio_router
 
-__all__ = ["meetings_router"]
+__all__ = ["audio_router"]

@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class TranscriberService:
-    """Transcribes meeting audio using Whisper models (via faster-whisper)."""
+    """Transcribes audio using Whisper models (via faster-whisper)."""
 
     def __init__(self, settings: Settings) -> None:
         self._settings = settings

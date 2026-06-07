@@ -203,7 +203,7 @@ audio-summarizer/
 │   ├── main.py                 # FastAPI app
 │   ├── config.py               # Environment settings
 │   ├── schemas.py              # Request/response models
-│   ├── api/meetings.py         # REST endpoints
+│   ├── api/audio.py            # REST endpoints
 │   ├── services/
 │   │   ├── transcriber.py      # Whisper transcription
 │   │   └── summarizer.py       # LLM summarization

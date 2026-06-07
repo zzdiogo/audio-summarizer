@@ -7,7 +7,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app import __version__
-from app.api.meetings import router as meetings_router
+from app.api.audio import router as audio_router
 from app.config import get_settings
 from app.schemas import HealthResponse
 
@@ -40,7 +40,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(meetings_router)
+app.include_router(audio_router)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
